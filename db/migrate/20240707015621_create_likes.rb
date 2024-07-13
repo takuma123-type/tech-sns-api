@@ -1,8 +1,10 @@
 class CreateLikes < ActiveRecord::Migration[7.0]
   def change
-    create_table :likes, id: :string do |t|
-      t.string :user_id, limit: 36, null: false
-      t.string :post_id, limit: 36, null: false
+    enable_extension 'pgcrypto' unless extension_enabled?('pgcrypto')
+
+    create_table :likes, id: :uuid do |t|
+      t.uuid :user_id, null: false
+      t.uuid :post_id, null: false
       t.timestamps
     end
 

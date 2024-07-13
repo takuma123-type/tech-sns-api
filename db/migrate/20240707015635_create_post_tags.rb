@@ -1,8 +1,8 @@
 class CreatePostTags < ActiveRecord::Migration[7.0]
   def change
-    create_table :post_tags, id: :string do |t|
-      t.string :post_id, limit: 36, null: false
-      t.string :tag_id, limit: 36, null: false
+    create_table :post_tags, id: :uuid do |t|
+      t.uuid :post_id, null: false
+      t.uuid :tag_id, null: false
       t.timestamps
     end
 
