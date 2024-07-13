@@ -23,9 +23,6 @@ class Api::CreatePostUsecase < Api::Usecase
         post.tags << tag
       end if input.tags.present?
 
-      # Postオブジェクトの再読み込み（関連付けを含む）
-      post.reload
-
       post_create_cell = Models::PostCreateCell.new(
         code: post.code,
         content: post.content,
