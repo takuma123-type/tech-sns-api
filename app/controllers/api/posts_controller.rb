@@ -1,8 +1,21 @@
 class Api::PostsController < Api::BaseController
   skip_before_action :verify_authenticity_token
 
+  def index
+    usecase = Api::FetchPostsUsecase.new(
+      input: Api::FetchPostsUsecase::Input.new
+    )
+    @output = usecase.fetch
+
+    render 'api/posts/index', formats: [:json]
+  rescue => e
+    Rails.logger.error("Error: #{e.message}")
+    render json: { error: 'Internal server error' }, status: :internal_server_error
+  end
+
   def create
-    input = Api::CreatePostUsecase::Input.new(content: params[:content], tags: params[:tags], user_id: @current_user.id)
+    input = Api::CreatePostUsecase::Input.new(
+      content: params[:content], tags: params[:tags], user_id: @current_user.id)
     usecase = Api::CreatePostUsecase.new(input: input)
     
     if usecase.create
