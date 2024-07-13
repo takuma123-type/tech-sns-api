@@ -1,8 +1,10 @@
 class CreateFollowers < ActiveRecord::Migration[7.0]
   def change
-    create_table :followers, id: :string do |t|
-      t.string :follower_id, limit: 36, null: false
-      t.string :followed_id, limit: 36, null: false
+    enable_extension 'pgcrypto' unless extension_enabled?('pgcrypto')
+
+    create_table :followers, id: :uuid do |t|
+      t.uuid :follower_id, null: false
+      t.uuid :followed_id, null: false
       t.timestamps
     end
 

@@ -12,53 +12,54 @@
 
 ActiveRecord::Schema[7.0].define(version: 2024_07_07_015639) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
-  create_table "followers", id: :string, force: :cascade do |t|
-    t.string "follower_id", limit: 36, null: false
-    t.string "followed_id", limit: 36, null: false
+  create_table "followers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "follower_id", null: false
+    t.uuid "followed_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "likes", id: :string, force: :cascade do |t|
-    t.string "user_id", limit: 36, null: false
-    t.string "post_id", limit: 36, null: false
+  create_table "likes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "post_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "notifications", id: :string, force: :cascade do |t|
-    t.string "user_id", limit: 36, null: false
-    t.string "notifiable_id", limit: 36, null: false
+  create_table "notifications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "notifiable_id", null: false
     t.string "notifiable_type", null: false
     t.string "type", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "post_tags", id: :string, force: :cascade do |t|
-    t.string "post_id", limit: 36, null: false
-    t.string "tag_id", limit: 36, null: false
+  create_table "post_tags", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "post_id", null: false
+    t.uuid "tag_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "posts", id: :string, force: :cascade do |t|
-    t.string "user_id", limit: 36, null: false
+  create_table "posts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
     t.string "code", limit: 36
     t.string "content", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "tags", id: :string, force: :cascade do |t|
+  create_table "tags", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", limit: 50, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "users", id: :string, force: :cascade do |t|
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "code", limit: 36
     t.string "email", limit: 255, null: false
     t.string "password", limit: 255, null: false
