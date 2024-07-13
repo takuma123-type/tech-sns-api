@@ -3,10 +3,6 @@ class Api::CreatePostUsecase < Api::Usecase
     attr_accessor :content, :tags, :user_id
   end
 
-  class Output < Api::Usecase::Output
-    attr_accessor :post
-  end
-
   attr_reader :output
 
   def create
@@ -26,7 +22,17 @@ class Api::CreatePostUsecase < Api::Usecase
         tag = Tag.find_or_create_by!(name: tag_name)
         post.tags << tag
       end if input.tags.present?
-      @output = Output.new(post: post)
+
+      # Postオブジェクトの再読み込み（関連付けを含む）
+      post.reload
+
+      post_cell = Models::PostCell.new(
+        code: post.code,
+        content: post.content,
+        tags: post.tags.map(&:name)
+      )
+
+      @output = post_cell
       true
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.warn(self.class) { "ポストの保存に失敗しました。errors: #{e.record.errors.full_messages.join(", ")}" }
