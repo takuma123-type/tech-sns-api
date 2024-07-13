@@ -1,6 +1,7 @@
 require 'bcrypt'
 
 class User < ApplicationRecord
+  has_many :posts
   include BCrypt
 
   def password=(new_password)

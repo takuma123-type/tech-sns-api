@@ -26,13 +26,13 @@ class Api::CreatePostUsecase < Api::Usecase
       # Postオブジェクトの再読み込み（関連付けを含む）
       post.reload
 
-      post_cell = Models::PostCell.new(
+      post_create_cell = Models::PostCreateCell.new(
         code: post.code,
         content: post.content,
         tags: post.tags.map(&:name)
       )
 
-      @output = post_cell
+      @output = post_create_cell
       true
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.warn(self.class) { "ポストの保存に失敗しました。errors: #{e.record.errors.full_messages.join(", ")}" }
