@@ -1,5 +1,6 @@
 class Api::PostsController < Api::BaseController
   skip_before_action :verify_authenticity_token
+  skip_before_action :set_current_user, only: [:index]
 
   def index
     usecase = Api::FetchPostsUsecase.new(
