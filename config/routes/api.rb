@@ -1,4 +1,10 @@
 resources :posts, only: [:index, :create] do
 end
 
-post 'sessions', to: 'sessions#create'
+resources :sessions, only: [] do
+  collection do
+    post :sign_up
+    post :log_in
+    put :update_profile
+  end
+end
