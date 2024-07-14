@@ -8,7 +8,11 @@ class Api::UpdateProfileUsecase < Api::Usecase
   class Output < Api::Usecase::Output; end
 
   def update
-    if input.user.update(name: input.name, avatar_url: input.avatar_url, description: input.description)
+    if input.user.update(
+      name: input.name, 
+      avatar_url: input.avatar_url, 
+      description: input.description
+    )
       Output.new
     else
       raise UpdateProfileError.new(input.user.errors.full_messages.join(', '))
