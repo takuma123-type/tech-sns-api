@@ -1,4 +1,5 @@
 json.array!(@output.posts) do |post|
+  json.code post.code
   json.avatar_url post.avatar_url
   json.name post.name
   json.tags post.tags

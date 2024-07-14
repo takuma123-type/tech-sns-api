@@ -13,6 +13,7 @@ class Api::FetchPostsUsecase < Api::Usecase
   def fetch
     posts = Post.includes(:tags, :user).all.map do |post|
       Models::PostCell.new(
+        code: post.code,
         avatar_url: post.user.avatar_url,
         name: post.user.name,
         tags: post.tags.map(&:name),
