@@ -1,4 +1,4 @@
-resources :posts, only: [:index, :create] do
+resources :posts, only: [:index, :create, :show], param: :code do
 end
 
 resources :sessions, only: [] do

@@ -1,6 +1,6 @@
 class Api::PostsController < Api::BaseController
   skip_before_action :verify_authenticity_token
-  skip_before_action :set_current_user, only: [:index]
+  skip_before_action :set_current_user, only: [:index, :show]
 
   def index
     usecase = Api::FetchPostsUsecase.new(
@@ -25,6 +25,21 @@ class Api::PostsController < Api::BaseController
     else
       render json: { error: 'Invalid input' }, status: :unprocessable_entity
     end
+  rescue => e
+    Rails.logger.error("Error: #{e.message}")
+    render json: { error: 'Internal server error' }, status: :internal_server_error
+  end
+
+  def show
+    usecase = Api::GetPostDetailUsecase.new(
+      input: Api::GetPostDetailUsecase::Input.new(code: params[:code])
+    )
+    @output = usecase.get
+
+    render 'api/posts/show', formats: [:json]
+  rescue ActiveRecord::RecordNotFound => e
+    Rails.logger.error("Error: #{e.message}")
+    render json: { error: 'Post not found' }, status: :not_found
   rescue => e
     Rails.logger.error("Error: #{e.message}")
     render json: { error: 'Internal server error' }, status: :internal_server_error
