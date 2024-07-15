@@ -36,7 +36,9 @@ gem 'rack-cors'
 
 gem 'redis'
 
-gem 'actioncable'
+gem 'redis-namespace'
+
+gem 'hiredis'
 
 # Use Redis adapter to run Action Cable in production
 # gem "redis", "~> 4.0"

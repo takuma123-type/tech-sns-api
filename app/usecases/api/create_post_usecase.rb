@@ -30,8 +30,10 @@ class Api::CreatePostUsecase < Api::Usecase
       )
 
       @output = post_create_cell
-      
-      ActionCable.server.broadcast 'posts_channel', post: render_post(post)
+
+      # ブロードキャスト用のデータをハッシュ形式で渡す
+      post_json = render_post(post)
+      ActionCable.server.broadcast 'posts_channel', { post: post_json }
 
       true
     rescue ActiveRecord::RecordInvalid => e
@@ -50,7 +52,6 @@ class Api::CreatePostUsecase < Api::Usecase
   end
 
   def render_post(post)
-    ApplicationController.renderer.render(partial: 'posts/post', locals: { post: post })
+    ApplicationController.renderer.render(partial: 'api/posts/post', formats: [:json], locals: { post: post }).html_safe
   end
 end
-s
