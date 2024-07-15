@@ -30,6 +30,9 @@ class Api::CreatePostUsecase < Api::Usecase
       )
 
       @output = post_create_cell
+      
+      ActionCable.server.broadcast 'posts_channel', post: render_post(post)
+
       true
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.warn(self.class) { "ポストの保存に失敗しました。errors: #{e.record.errors.full_messages.join(", ")}" }
@@ -45,4 +48,9 @@ class Api::CreatePostUsecase < Api::Usecase
   def valid_input?
     !input.content.blank? && !input.user_id.nil?
   end
+
+  def render_post(post)
+    ApplicationController.renderer.render(partial: 'posts/post', locals: { post: post })
+  end
 end
+s
