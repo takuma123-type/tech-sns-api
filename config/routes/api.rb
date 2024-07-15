@@ -8,3 +8,5 @@ resources :sessions, only: [] do
     put :update_profile
   end
 end
+
+mount ActionCable.server => '/cable'
