@@ -34,6 +34,8 @@ gem 'bcrypt'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 
+gem 'aws-sdk-s3'
+
 gem 'redis'
 
 gem 'redis-namespace'
@@ -54,6 +56,9 @@ gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
+
+# Gemfile
+gem 'dotenv-rails', groups: [:development, :test]
 
 # Use Sass to process CSS
 # gem "sassc-rails"
