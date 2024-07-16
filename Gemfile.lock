@@ -259,6 +259,7 @@ DEPENDENCIES
   bootsnap
   capybara
   debug
+  dotenv
   dotenv-rails
   hiredis
   importmap-rails

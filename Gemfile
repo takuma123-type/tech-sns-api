@@ -36,6 +36,8 @@ gem 'rack-cors'
 
 gem 'aws-sdk-s3'
 
+gem 'dotenv'
+
 gem 'redis'
 
 gem 'redis-namespace'
