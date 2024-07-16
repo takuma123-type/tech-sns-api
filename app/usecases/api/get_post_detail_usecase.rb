@@ -20,10 +20,14 @@ class Api::GetPostDetailUsecase < Api::Usecase
   end
 
   def get
+    service = CloudflareR2Service.new
+
     post = Post.includes(:tags, :user).find_by!(code: @input.code)
 
+    avatar_url = post.user.avatar_url ? service.generate_signed_url(post.user.avatar_url.split('/').last) : nil
     post_detail = Models::PostCell.new(
-      avatar_url: post.user.avatar_url,
+      code: post.code,
+      avatar_url: avatar_url,
       name: post.user.name,
       tags: post.tags.map(&:name),
       content: post.content
