@@ -1,9 +1,19 @@
 class Api::CreatePostUsecase < Api::Usecase
   class Input < Api::Usecase::Input
     attr_accessor :content, :tags, :user_id
+
+    def initialize(content:, tags:, user_id:)
+      @content = content
+      @tags = tags
+      @user_id = user_id
+    end
   end
 
   attr_reader :output
+
+  def initialize(input:)
+    @input = input
+  end
 
   def create
     unless valid_input?
@@ -26,7 +36,8 @@ class Api::CreatePostUsecase < Api::Usecase
       post_create_cell = Models::PostCreateCell.new(
         code: post.code,
         content: post.content,
-        tags: post.tags.map(&:name)
+        tags: post.tags.map(&:name),
+        user: post.user
       )
 
       @output = post_create_cell

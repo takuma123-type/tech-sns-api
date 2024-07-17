@@ -40,11 +40,12 @@ class Api::SessionsController < Api::BaseController
           description: profile_params[:description]
         )
       )
-
+  
       output = usecase.update
       render json: { message: "Profile updated successfully", token: output.token }, status: :ok
     rescue => e
       Rails.logger.error("Profile update failed: #{e.message}")
+      Rails.logger.error(e.backtrace.join("\n")) # 追加: スタックトレースをログに出力
       render json: { error: "Internal server error: #{e.message}" }, status: :internal_server_error
     end
   end
@@ -52,7 +53,7 @@ class Api::SessionsController < Api::BaseController
   private
 
   def create_params
-    params.permit(:email, :password)
+    params.require(:session).permit(:email, :password)
   end
 
   def profile_params

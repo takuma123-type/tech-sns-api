@@ -13,6 +13,10 @@ class Api::GetPostDetailUsecase < Api::Usecase
     def initialize(post_detail:)
       @post_detail = post_detail
     end
+
+    def post
+      @post_detail
+    end
   end
 
   def initialize(input:)
@@ -20,14 +24,13 @@ class Api::GetPostDetailUsecase < Api::Usecase
   end
 
   def get
-    service = CloudflareR2Service.new
-
     post = Post.includes(:tags, :user).find_by!(code: @input.code)
 
-    avatar_url = post.user.avatar_url ? service.generate_signed_url(post.user.avatar_url.split('/').last) : nil
+    avatar_data_url = post.user.avatar_data.present? ? "data:image/png;base64,#{Base64.encode64(post.user.avatar_data)}" : nil
+
     post_detail = Models::PostCell.new(
       code: post.code,
-      avatar_url: avatar_url,
+      avatar_url: avatar_data_url,
       name: post.user.name,
       tags: post.tags.map(&:name),
       content: post.content
