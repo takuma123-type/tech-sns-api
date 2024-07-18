@@ -30,6 +30,11 @@ class Api::SessionsController < Api::BaseController
     render json: { message: e.message }, status: :unprocessable_entity
   end
 
+  def log_out
+    @current_user = nil
+    render json: { message: "Logged out successfully" }, status: :ok
+  end
+
   def update_profile
     begin
       usecase = Api::UpdateProfileUsecase.new(

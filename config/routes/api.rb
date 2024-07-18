@@ -9,6 +9,7 @@ resources :sessions, only: [] do
     post :sign_up
     post :log_in
     put :update_profile
+    delete :log_out
   end
 end
 
