@@ -8,7 +8,7 @@ class Api::PostsController < Api::BaseController
     )
     @output = usecase.fetch
 
-    render 'api/posts/index', formats: [:json]
+    render json: @output.posts, status: :ok
   rescue => e
     Rails.logger.error("Error: #{e.message}")
     render json: { error: 'Internal server error' }, status: :internal_server_error
@@ -35,11 +35,7 @@ class Api::PostsController < Api::BaseController
       input: Api::GetPostDetailUsecase::Input.new(code: params[:code])
     )
     @output = usecase.get
-
-    render 'api/posts/show', formats: [:json]
-  rescue ActiveRecord::RecordNotFound => e
-    Rails.logger.error("Error: #{e.message}")
-    render json: { error: 'Post not found' }, status: :not_found
+    render json: @output.post, status: :ok
   rescue => e
     Rails.logger.error("Error: #{e.message}")
     render json: { error: 'Internal server error' }, status: :internal_server_error

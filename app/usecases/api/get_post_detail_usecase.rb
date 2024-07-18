@@ -13,6 +13,10 @@ class Api::GetPostDetailUsecase < Api::Usecase
     def initialize(post_detail:)
       @post_detail = post_detail
     end
+
+    def post
+      @post_detail
+    end
   end
 
   def initialize(input:)
@@ -22,8 +26,11 @@ class Api::GetPostDetailUsecase < Api::Usecase
   def get
     post = Post.includes(:tags, :user).find_by!(code: @input.code)
 
+    avatar_data_url = post.user.avatar_data.present? ? "data:image/png;base64,#{Base64.encode64(post.user.avatar_data)}" : nil
+
     post_detail = Models::PostCell.new(
-      avatar_url: post.user.avatar_url,
+      code: post.code,
+      avatar_url: avatar_data_url,
       name: post.user.name,
       tags: post.tags.map(&:name),
       content: post.content

@@ -64,7 +64,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_07_015639) do
     t.string "email", limit: 255, null: false
     t.string "password", limit: 255, null: false
     t.string "name", limit: 255
-    t.string "avatar_url", limit: 255
+    t.binary "avatar_data"
     t.string "description", limit: 2500
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

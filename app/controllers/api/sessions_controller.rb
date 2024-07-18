@@ -31,30 +31,33 @@ class Api::SessionsController < Api::BaseController
   end
 
   def update_profile
-    usecase = Api::UpdateProfileUsecase.new(
-      input: Api::UpdateProfileUsecase::Input.new(
-        user: @current_user,
-        name: profile_params[:name],
-        avatar_url: profile_params[:avatar_url],
-        description: profile_params[:description]
+    begin
+      usecase = Api::UpdateProfileUsecase.new(
+        input: Api::UpdateProfileUsecase::Input.new(
+          user: @current_user,
+          name: profile_params[:name],
+          avatar: profile_params[:avatar],
+          description: profile_params[:description]
+        )
       )
-    )
-
-    if usecase.update
-      render json: { message: "Profile updated successfully" }, status: :ok
-    else
-      render json: { error: "Profile update failed" }, status: :unprocessable_entity
+  
+      output = usecase.update
+      render json: { message: "Profile updated successfully", token: output.token }, status: :ok
+    rescue => e
+      Rails.logger.error("Profile update failed: #{e.message}")
+      Rails.logger.error(e.backtrace.join("\n")) # 追加: スタックトレースをログに出力
+      render json: { error: "Internal server error: #{e.message}" }, status: :internal_server_error
     end
   end
 
   private
 
   def create_params
-    params.permit(:email, :password)
+    params.require(:session).permit(:email, :password)
   end
 
   def profile_params
-    params.permit(:name, :avatar_url, :description)
+    params.permit(:name, :avatar, :description)
   end
 
   def authenticate_user!
@@ -62,7 +65,7 @@ class Api::SessionsController < Api::BaseController
     decoded_token = JWT.decode(token, Rails.application.secrets.secret_key_base)[0]
     @current_user = User.find_by(id: decoded_token['id'])
     render json: { error: 'Unauthorized' }, status: :unauthorized unless @current_user
-  rescue JWT::DecodeError
+  rescue JWT::DecodeError => e
     render json: { error: 'Unauthorized' }, status: :unauthorized
   end
 end

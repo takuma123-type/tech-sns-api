@@ -1,4 +1,7 @@
 resources :posts, only: [:index, :create, :show], param: :code do
+  collection do
+    get 'generate_signed_url'
+  end
 end
 
 resources :sessions, only: [] do
