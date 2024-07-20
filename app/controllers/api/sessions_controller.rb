@@ -1,6 +1,6 @@
 class Api::SessionsController < Api::BaseController
-  skip_before_action :verify_authenticity_token, only: [:sign_up, :log_in, :update_profile]
-  skip_before_action :set_current_user, only: [:sign_up, :log_in]
+  skip_before_action :verify_authenticity_token, only: [:sign_up, :log_in, :update_profile, :log_out]
+  skip_before_action :set_current_user, only: [:sign_up, :log_in, :log_out]
 
   def sign_up
     usecase = Api::SignUpUsecase.new(
