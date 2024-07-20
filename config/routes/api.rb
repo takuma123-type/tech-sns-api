@@ -4,6 +4,8 @@ resources :posts, only: [:index, :create, :show], param: :code do
   end
 end
 
+resources :tags, only: [:index]
+
 resources :sessions, only: [] do
   collection do
     post :sign_up
