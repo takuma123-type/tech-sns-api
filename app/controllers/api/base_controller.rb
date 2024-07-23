@@ -1,4 +1,3 @@
-# app/controllers/api/base_controller.rb
 class Api::BaseController < ApplicationController
   before_action :set_current_user
   include AuthHelper
