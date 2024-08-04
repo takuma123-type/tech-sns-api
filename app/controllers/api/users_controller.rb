@@ -1,10 +1,26 @@
 class Api::UsersController < Api::BaseController
+  skip_before_action :verify_authenticity_token
+  before_action :set_current_user, only: [:update_profile, :update_password, :destroy]
+
   def show
-    usecase = Api::GetUserDetailUsecase.new(
-      input: Api::GetUserDetailUsecase::Input.new(id: params[:id])
-    )
-    @output = usecase.get
-    render json: @output.user, status: :ok
+    token = request.headers['Authorization']&.split(' ')&.last
+    Rails.logger.info("Token: #{token}")
+    decoded_token = decode_token(token)
+    Rails.logger.info("Decoded Token: #{decoded_token}")
+    user_id = decoded_token['id'] if decoded_token
+    Rails.logger.info("User ID: #{user_id}")
+
+    if user_id
+      usecase = Api::GetUserDetailUsecase.new(
+        input: Api::GetUserDetailUsecase::Input.new(id: user_id)
+      )
+      @output = usecase.get
+      render 'api/users/show', formats: [:json], handlers: [:jbuilder]
+    else
+      render json: { error: 'Unauthorized' }, status: :unauthorized
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'User not found' }, status: :not_found
   rescue => e
     Rails.logger.error("Error: #{e.message}")
     render json: { error: 'Internal server error' }, status: :internal_server_error
@@ -16,11 +32,11 @@ class Api::UsersController < Api::BaseController
         input: Api::UpdateProfileUsecase::Input.new(
           user: @current_user,
           name: profile_params[:name],
-          avatar: profile_params[:avatar],
+          avatar: parse_base64_image(profile_params[:avatar]),
           description: profile_params[:description]
         )
       )
-
+  
       output = usecase.update
       render json: { message: "Profile updated successfully", token: output.token }, status: :ok
     rescue => e
@@ -68,10 +84,31 @@ class Api::UsersController < Api::BaseController
   private
 
   def profile_params
-    params.require(:profile).permit(:name, :avatar, :description)
+    params.permit(:name, :avatar, :description)
   end
+  
 
   def password_params
     params.require(:password).permit(:current_password, :new_password, :new_password_confirmation)
   end
+
+  def decode_token(token)
+    JWT.decode(token, Rails.application.secrets.secret_key_base)[0]
+  rescue JWT::DecodeError => e
+    Rails.logger.error("Token decode error: #{e.message}")
+    nil
+  end
+
+def parse_base64_image(data)
+  if data && data.match(%r{^data:(.*?);(.*?),(.*)$})
+    image_data = data.split(',').last
+    tempfile = Tempfile.new
+    tempfile.binmode
+    tempfile.write(Base64.decode64(image_data))
+    tempfile.rewind
+    tempfile
+  else
+    nil
+  end
+end
 end

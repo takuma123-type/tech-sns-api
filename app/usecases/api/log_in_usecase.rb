@@ -6,14 +6,19 @@ class Api::LogInUsecase < Api::Usecase
   end
 
   class Output < Api::Usecase::Output
-    attr_accessor :token
+    attr_accessor :token, :code
+
+    def initialize(token:, code:)
+      @token = token
+      @code = code
+    end
   end
 
   def log_in
     user = User.find_by(email: input.email)
     if user&.authenticate(input.password)
       token = user.generate_jwt
-      Output.new(token: token)
+      Output.new(token: token, code: user.code)
     else
       raise LogInError.new("Invalid email or password")
     end

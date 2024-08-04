@@ -6,6 +6,10 @@ end
 
 resources :tags, only: [:index]
 
+resources :users, only: [:show, :update], param: :code do
+  put 'update_profile', on: :collection
+end
+
 resources :sessions, only: [] do
   collection do
     post :sign_up

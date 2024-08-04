@@ -28,13 +28,12 @@ class Api::GetUserDetailUsecase < Api::Usecase
 
     avatar_data_url = user.avatar_data.present? ? "data:image/png;base64,#{Base64.encode64(user.avatar_data)}" : nil
 
-    user_detail = Models::UserCell.new(
-      id: user.id,
+    user_detail = {
+      code: user.code,
       avatar_url: avatar_data_url,
       name: user.name,
-      email: user.email,
-      created_at: user.created_at
-    )
+      description: user.description
+    }
 
     Output.new(user_detail: user_detail)
   end

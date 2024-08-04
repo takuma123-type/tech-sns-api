@@ -1,6 +1,6 @@
 json.user do
-  json.avatar_data @output.user_detail.avatar_data
-  json.name @output.user_detail.name
-  json.tags @output.user_detail.tags
-  json.content @output.user_detail.content
+  json.code @output.user_detail[:code]
+  json.avatar_url @output.user_detail[:avatar_url]
+  json.name @output.user_detail[:name]
+  json.description @output.user_detail[:description]
 end

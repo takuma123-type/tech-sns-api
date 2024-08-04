@@ -22,11 +22,11 @@ class Api::UpdateProfileUsecase < Api::Usecase
 
   def update
     begin
-      avatar_data = input.avatar.read if input.avatar.present?
+      avatar_data = input.avatar.present? ? input.avatar.read : input.user.avatar_data
 
       user_params = {
         name: input.name,
-        avatar_data: avatar_data || input.user.avatar_data,
+        avatar_data: avatar_data,
         description: input.description
       }
 
